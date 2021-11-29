@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { walletAction } from '../actions';
 import MetodoPagamento from './MetodoPagamento';
 
@@ -13,7 +14,7 @@ class Forms extends React.Component {
       valor: 0,
       descricao: '',
       pagamento: '',
-      coin: 'USD',
+      moeda: 'USD',
       tag: '',
       rates: {},
     };
@@ -32,12 +33,13 @@ class Forms extends React.Component {
   }
 
   handleClick() {
+    const { attValor } = this.props;
     this.handleCoinAPI().then((coins) => {
       this.setState({ rates: coins }, () => {
-        const { valor, descricao, pagamento, tag, coin, rates } = this.state;
+        const { valor, descricao, pagamento, tag, moeda, rates } = this.state;
         const expence = {
           value: valor,
-          currency: coin,
+          currency: moeda,
           method: pagamento,
           tag,
           description: descricao,
@@ -48,11 +50,12 @@ class Forms extends React.Component {
         this.setState({ valor: 0,
           descricao: '',
           pagamento: '',
-          coin: 'USD',
+          moeda: 'USD',
           tag: '',
           rates: {},
         });
       });
+      attValor();
     });
   }
 
@@ -73,7 +76,6 @@ class Forms extends React.Component {
       <form>
         <h1>Despesas</h1>
         <label htmlFor="valor-despesas">
-          Valor
           <input
             data-testid="value-input"
             name="valor"
@@ -85,21 +87,23 @@ class Forms extends React.Component {
         <label htmlFor="despesas">
           Descrição
           <input
+            id="despesas"
             data-testid="description-input"
             name="descricao"
-            type="text-area"
+            type="text"
             onChange={ this.handleChange }
           />
         </label>
         <label htmlFor="currency">
+          Moeda
           <select
             id="currency"
             name="moeda"
-            onClick={ this.handleChange }
+            onChange={ this.handleChange }
             data-testid="currency-input"
           >
             {codes.map((code) => (
-              <option name="coin" value={ code } data-testid={ code } key={ code }>
+              <option value={ code } data-testid={ code } key={ code }>
                 {code}
               </option>
             ))}
@@ -120,5 +124,9 @@ class Forms extends React.Component {
 const mapDispatchToProps = (dispatch) => ({
   exchange: (rates) => dispatch(walletAction(rates)),
 });
+
+Forms.propTypes = {
+  exchange: PropTypes.func,
+}.isRequired;
 
 export default connect(null, mapDispatchToProps)(Forms);

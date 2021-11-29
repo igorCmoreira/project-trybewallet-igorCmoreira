@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Forms from '../components/Forms';
+import Tabela from '../components/Tabela';
 
 class Wallet extends React.Component {
   constructor(props) {
@@ -12,6 +13,17 @@ class Wallet extends React.Component {
       coin: 'BRL',
       totalField: 0,
     };
+    this.attValor = this.attValor.bind(this);
+  }
+
+  // Eestava na duvida em qual valor da corretagem usar:
+  // para esta parte realizei uma consulta no repositorio da lygia Dias
+  attValor() {
+    const { totalWallet } = this.props;
+    const total = totalWallet.reduce((controle, gasto) => (
+      controle + (gasto.value * gasto.exchangeRates[gasto.currency].ask)
+    ), 0);
+    this.setState({ totalField: total.toFixed(2) });
   }
 
   render() {
@@ -24,7 +36,8 @@ class Wallet extends React.Component {
           <spam data-testid="header-currency-field">{coin}</spam>
         </header>
         <section>
-          <Forms />
+          <Forms attValor={ this.attValor } />
+          <Tabela />
         </section>
       </div>
     );
@@ -32,10 +45,12 @@ class Wallet extends React.Component {
 }
 const mapStateToProps = (state) => ({
   emailEntrada: state.user.email,
+  totalWallet: state.wallet.expenses,
 });
 
 Wallet.propTypes = {
-  emailEntrada: PropTypes.string.isRequired,
-};
+  emailEntrada: PropTypes.string,
+  totalWallet: PropTypes.array,
+}.isRequired;
 
 export default connect(mapStateToProps, null)(Wallet);

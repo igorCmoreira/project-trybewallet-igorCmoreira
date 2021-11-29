@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class MetodoPagamento extends React.Component {
   render() {
@@ -9,7 +10,7 @@ class MetodoPagamento extends React.Component {
           <select
             id="metodo"
             name="pagamento"
-            onClick={ handleChange }
+            onChange={ handleChange }
             data-testid="method-input"
           >
             {metodoPagamento.map((metodo) => (
@@ -23,7 +24,7 @@ class MetodoPagamento extends React.Component {
           <select
             id="tag"
             name="tag"
-            onClick={ handleChange }
+            onChange={ handleChange }
             data-testid="tag-input"
           >
             {categoria.map((tag) => (
@@ -35,5 +36,10 @@ class MetodoPagamento extends React.Component {
     );
   }
 }
+MetodoPagamento.propTypes = {
+  handleChange: PropTypes.func,
+  categoria: PropTypes.array,
+  metodoPagamento: PropTypes.array,
+}.isRequired;
 
 export default MetodoPagamento;
